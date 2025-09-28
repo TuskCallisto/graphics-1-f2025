@@ -15,9 +15,9 @@ struct Vertex
 // Assignment 1 object 1 -- white triangle (change these vertex colours from red to white)!!!
 static const Vertex vertices_white[3] =
 {
-    { { -0.6f, -0.4f }, { 1.0f, 0.0f, 0.0f } },
-    { {  0.6f, -0.4f }, { 1.0f, 0.0f, 0.0f } },
-    { {   0.f,  0.6f }, { 1.0f, 0.0f, 0.0f } }
+    { { -0.6f, -0.4f }, { 1.0f, 1.0f, 1.0f } },
+    { {  0.6f, -0.4f }, { 1.0f, 1.0f, 1.0f } },
+    { {   0.f,  0.6f }, { 1.0f, 1.0f, 1.0f } }
 };
 
 // Assignment 1 object 2 -- rainbow triangle (done for you)
@@ -46,8 +46,8 @@ int main()
 {
     CreateWindow(800, 800, "Graphics 1");
     
-    GLuint a1_tri_vert = CreateShader(GL_VERTEX_SHADER, "./assets/shaders/a1_triangle.vert");
-    GLuint a1_tri_frag = CreateShader(GL_FRAGMENT_SHADER, "./assets/shaders/a1_triangle.frag");
+    GLuint a1_tri_vert = CreateShader(GL_VERTEX_SHADER, "../../assets/shaders/a1_triangle.vert");
+    GLuint a1_tri_frag = CreateShader(GL_FRAGMENT_SHADER, "../../assets/shaders/a1_triangle.frag");
     GLuint a1_tri_shader = CreateProgram(a1_tri_vert, a1_tri_frag);
 
     GLuint vertex_buffer_rainbow_positions;
@@ -103,7 +103,7 @@ int main()
     Matrix world = world = MatrixIdentity();
 
     // Generally you want to Scale * Rotate * Translate (order matters)!!!
-    world = MatrixRotateZ(30.0f * DEG2RAD) * MatrixTranslate(0.5f, 0.0f, 0.0f);
+    //world = MatrixRotateZ(30.0f * DEG2RAD) * MatrixTranslate(0.5f, 0.0f, 0.0f);
 
     /* Loop until the user closes the window */
     while (!WindowShouldClose())
@@ -131,7 +131,7 @@ int main()
 
         switch (object_index)
         {
-        case 0:
+        case 0:  //white
             glUseProgram(a1_tri_shader);
             glUniform3f(u_color, 1.0f, 1.0f, 1.0f);
 
@@ -142,7 +142,7 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 3);
             break;
 
-        case 1:
+        case 1: //rainbow
             glUseProgram(a1_tri_shader);
             glUniform3f(u_color, 0.8, 0.8f, 0.8f);
             glUniformMatrix4fv(u_world, 1, GL_FALSE, MatrixToFloat(world));
@@ -150,23 +150,28 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 3);
             break;
 
-        case 2:
+        case 2: //over time
+        {
             glUseProgram(a1_tri_shader);
-            glUniform3f(u_color, 0.6, 0.6f, 0.6f);
+            float animated_color = (sinf(tt) + 1.0f) * 0.5f;
+            glUniform3f(u_color, animated_color, animated_color, animated_color);;
             glUniformMatrix4fv(u_world, 1, GL_FALSE, MatrixToFloat(world));
             glBindVertexArray(vertex_array_rainbow);
             glDrawArrays(GL_TRIANGLES, 0, 3);
             break;
-
-        case 3:
+        }
+        case 3: //back and forth
+        {
             glUseProgram(a1_tri_shader);
             glUniform3f(u_color, 0.4, 0.4f, 0.4f);
-            glUniformMatrix4fv(u_world, 1, GL_FALSE, MatrixToFloat(world));
+            float x_offset = sinf(tt);
+            Matrix back_forth_world = MatrixTranslate(x_offset, 0.0f, 0.0f);
+            glUniformMatrix4fv(u_world, 1, GL_FALSE, MatrixToFloat(back_forth_world));
             glBindVertexArray(vertex_array_rainbow);
             glDrawArrays(GL_TRIANGLES, 0, 3);
             break;
-
-        case 4:
+        }
+        case 4: //counter clockwise z axis
             glUseProgram(a1_tri_shader);
             glUniform3f(u_color, 0.5, 0.5f, 0.5f);
             glUniformMatrix4fv(u_world, 1, GL_FALSE, MatrixToFloat(world));
