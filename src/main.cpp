@@ -172,12 +172,17 @@ int main()
             break;
         }
         case 4: //counter clockwise z axis
+
+        {
             glUseProgram(a1_tri_shader);
             glUniform3f(u_color, 0.5, 0.5f, 0.5f);
-            glUniformMatrix4fv(u_world, 1, GL_FALSE, MatrixToFloat(world));
+            float rotationz = tt;
+            Matrix rotation_world = MatrixRotateZ(rotationz);
+            glUniformMatrix4fv(u_world, 1, GL_FALSE, MatrixToFloat(rotation_world));
             glBindVertexArray(vertex_array_rainbow);
             glDrawArrays(GL_TRIANGLES, 0, 3);
             break;
+        }
         }
 
         // Called at end of the frame to swap buffers and update input
